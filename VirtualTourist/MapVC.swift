@@ -16,7 +16,7 @@ class MapVC: UIViewController, MKMapViewDelegate {
     
     @IBOutlet weak var mapView: MKMapView!
     
-    var selectedLocation = MKPointAnnotation()
+    var selectedLocation = CLLocationCoordinate2D()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,7 +30,7 @@ class MapVC: UIViewController, MKMapViewDelegate {
             return
         }
         
-//        dest.location =
+        dest.location.coordinate = selectedLocation
     }
     
     @IBAction func addPin(_ sender: UILongPressGestureRecognizer) {
@@ -50,11 +50,13 @@ class MapVC: UIViewController, MKMapViewDelegate {
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         
-//        selectedLocation = view.annotation! 
+        guard let annotation = view.annotation as? MKPointAnnotation else {
+            return
+        }
+        
+        selectedLocation = annotation.coordinate
         
         performSegue(withIdentifier: "ShowImages", sender: nil)
-        // Look up coordinate in CoreData, prepare for segue to start loading photos on next page, and go to photo view
-            //        view.annotation?.coordinate
         
     }
     
