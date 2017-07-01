@@ -12,9 +12,11 @@ import CoreData
 
 class MapVC: UIViewController, MKMapViewDelegate {
 
-    // Will need to load existing annotation points from CoreData
-    // Will need to add annotations when map is long pressed
+    // TODO: need to load existing annotation points from CoreData
+    
     @IBOutlet weak var mapView: MKMapView!
+    
+    var selectedLocation = MKPointAnnotation()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,9 +26,11 @@ class MapVC: UIViewController, MKMapViewDelegate {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
-        if segue.identifier == "ShowImages" {
-            
+        guard let dest = segue.destination as? PhotoVC else {
+            return
         }
+        
+//        dest.location =
     }
     
     @IBAction func addPin(_ sender: UILongPressGestureRecognizer) {
@@ -46,6 +50,9 @@ class MapVC: UIViewController, MKMapViewDelegate {
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         
+//        selectedLocation = view.annotation! 
+        
+        performSegue(withIdentifier: "ShowImages", sender: nil)
         // Look up coordinate in CoreData, prepare for segue to start loading photos on next page, and go to photo view
             //        view.annotation?.coordinate
         
