@@ -19,6 +19,8 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        navigationController?.setNavigationBarHidden(false, animated: false)
+        
         setupMap()
         
     }
@@ -30,6 +32,12 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         let region = MKCoordinateRegionMake(location.coordinate, span)
         
         mapView.setRegion(region, animated: true)
+        
+        let annotation = MKPointAnnotation()
+        
+        annotation.coordinate = location.coordinate
+    
+        mapView.addAnnotation(annotation)
         
     }
     

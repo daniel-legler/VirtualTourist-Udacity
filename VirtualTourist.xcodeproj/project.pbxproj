@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		7475F34A1F07DB1A0012C2FA /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7475F3491F07DB1A0012C2FA /* Location.swift */; };
 		7475F34C1F07DC960012C2FA /* PhotoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7475F34B1F07DC960012C2FA /* PhotoVC.swift */; };
+		7475F34E1F07EB840012C2FA /* FlickrManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7475F34D1F07EB840012C2FA /* FlickrManager.swift */; };
+		7475F3511F07EED50012C2FA /* Loading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7475F3501F07EED50012C2FA /* Loading.swift */; };
 		74E1CEEA1F07CFDC0091A0E3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74E1CEE91F07CFDC0091A0E3 /* AppDelegate.swift */; };
 		74E1CEEF1F07CFDC0091A0E3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 74E1CEED1F07CFDC0091A0E3 /* Main.storyboard */; };
 		74E1CEF21F07CFDC0091A0E3 /* VirtualTourist.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 74E1CEF01F07CFDC0091A0E3 /* VirtualTourist.xcdatamodeld */; };
@@ -20,6 +22,8 @@
 /* Begin PBXFileReference section */
 		7475F3491F07DB1A0012C2FA /* Location.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		7475F34B1F07DC960012C2FA /* PhotoVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoVC.swift; sourceTree = "<group>"; };
+		7475F34D1F07EB840012C2FA /* FlickrManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlickrManager.swift; sourceTree = "<group>"; };
+		7475F3501F07EED50012C2FA /* Loading.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Loading.swift; sourceTree = "<group>"; };
 		74E1CEE61F07CFDC0091A0E3 /* VirtualTourist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VirtualTourist.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		74E1CEE91F07CFDC0091A0E3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		74E1CEEE1F07CFDC0091A0E3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -69,6 +73,8 @@
 			isa = PBXGroup;
 			children = (
 				74E1CEE91F07CFDC0091A0E3 /* AppDelegate.swift */,
+				7475F34D1F07EB840012C2FA /* FlickrManager.swift */,
+				7475F3501F07EED50012C2FA /* Loading.swift */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -190,6 +196,8 @@
 				74E1CEEA1F07CFDC0091A0E3 /* AppDelegate.swift in Sources */,
 				7475F34A1F07DB1A0012C2FA /* Location.swift in Sources */,
 				7475F34C1F07DC960012C2FA /* PhotoVC.swift in Sources */,
+				7475F3511F07EED50012C2FA /* Loading.swift in Sources */,
+				7475F34E1F07EB840012C2FA /* FlickrManager.swift in Sources */,
 				74E1CEF21F07CFDC0091A0E3 /* VirtualTourist.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

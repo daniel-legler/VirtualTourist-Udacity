@@ -18,9 +18,10 @@ class MapVC: UIViewController, MKMapViewDelegate {
     
     var selectedLocation = CLLocationCoordinate2D()
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
+        navigationController?.setNavigationBarHidden(true, animated: false)
         
     }
     
