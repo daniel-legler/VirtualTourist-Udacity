@@ -12,7 +12,7 @@
         <!--Navigation Controller-->
         <scene sceneID="rBa-To-9ff">
             <objects>
-                <navigationController id="fP5-DM-q7j" sceneMemberID="viewController">
+                <navigationController navigationBarHidden="YES" id="fP5-DM-q7j" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="xxg-8u-rM4">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -39,8 +39,10 @@
                         <subviews>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="jN3-BK-gcp">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <gestureRecognizers/>
                                 <connections>
                                     <outlet property="delegate" destination="gMX-Pz-89x" id="Zj1-03-NIa"/>
+                                    <outletCollection property="gestureRecognizers" destination="MAM-yh-kJu" appends="YES" id="dAi-Am-7Lj"/>
                                 </connections>
                             </mapView>
                         </subviews>
@@ -56,10 +58,16 @@
                     <nil key="simulatedStatusBarMetrics"/>
                     <nil key="simulatedTopBarMetrics"/>
                     <connections>
+                        <outlet property="mapView" destination="jN3-BK-gcp" id="hHk-fE-1zl"/>
                         <segue destination="8HK-f2-VbY" kind="show" identifier="ShowImages" id="tBw-Xd-Egn"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0Ag-W4-UWa" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="MAM-yh-kJu">
+                    <connections>
+                        <action selector="addPin:" destination="gMX-Pz-89x" id="wS9-Rt-aA1"/>
+                    </connections>
+                </pongPressGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="-442.39999999999998" y="437.63118440779613"/>
         </scene>
@@ -102,7 +110,7 @@
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="wYE-I4-blk">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="PhotoCell" id="wYE-I4-blk">
                                         <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">

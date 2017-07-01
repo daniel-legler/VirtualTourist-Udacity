@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7475F34A1F07DB1A0012C2FA /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7475F3491F07DB1A0012C2FA /* Location.swift */; };
 		74E1CEEA1F07CFDC0091A0E3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74E1CEE91F07CFDC0091A0E3 /* AppDelegate.swift */; };
 		74E1CEEF1F07CFDC0091A0E3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 74E1CEED1F07CFDC0091A0E3 /* Main.storyboard */; };
 		74E1CEF21F07CFDC0091A0E3 /* VirtualTourist.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 74E1CEF01F07CFDC0091A0E3 /* VirtualTourist.xcdatamodeld */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7475F3491F07DB1A0012C2FA /* Location.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		74E1CEE61F07CFDC0091A0E3 /* VirtualTourist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VirtualTourist.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		74E1CEE91F07CFDC0091A0E3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		74E1CEEE1F07CFDC0091A0E3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -37,6 +39,49 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7475F3401F07D4570012C2FA /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
+		7475F3451F07D46C0012C2FA /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				7475F3491F07DB1A0012C2FA /* Location.swift */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		7475F3461F07D4760012C2FA /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				74E1CEFE1F07D2010091A0E3 /* MapVC.swift */,
+			);
+			name = Controller;
+			sourceTree = "<group>";
+		};
+		7475F3471F07D47E0012C2FA /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				74E1CEE91F07CFDC0091A0E3 /* AppDelegate.swift */,
+			);
+			name = Utilities;
+			sourceTree = "<group>";
+		};
+		7475F3481F07D49E0012C2FA /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				74E1CEF01F07CFDC0091A0E3 /* VirtualTourist.xcdatamodeld */,
+				74E1CEF31F07CFDC0091A0E3 /* Assets.xcassets */,
+				74E1CEF81F07CFDC0091A0E3 /* Info.plist */,
+				74E1CEF51F07CFDC0091A0E3 /* LaunchScreen.storyboard */,
+				74E1CEED1F07CFDC0091A0E3 /* Main.storyboard */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		74E1CEDD1F07CFDC0091A0E3 = {
 			isa = PBXGroup;
 			children = (
@@ -56,13 +101,11 @@
 		74E1CEE81F07CFDC0091A0E3 /* VirtualTourist */ = {
 			isa = PBXGroup;
 			children = (
-				74E1CEE91F07CFDC0091A0E3 /* AppDelegate.swift */,
-				74E1CEED1F07CFDC0091A0E3 /* Main.storyboard */,
-				74E1CEF31F07CFDC0091A0E3 /* Assets.xcassets */,
-				74E1CEF51F07CFDC0091A0E3 /* LaunchScreen.storyboard */,
-				74E1CEF81F07CFDC0091A0E3 /* Info.plist */,
-				74E1CEF01F07CFDC0091A0E3 /* VirtualTourist.xcdatamodeld */,
-				74E1CEFE1F07D2010091A0E3 /* MapVC.swift */,
+				7475F3451F07D46C0012C2FA /* Model */,
+				7475F3401F07D4570012C2FA /* View */,
+				7475F3461F07D4760012C2FA /* Controller */,
+				7475F3471F07D47E0012C2FA /* Utilities */,
+				7475F3481F07D49E0012C2FA /* Resources */,
 			);
 			path = VirtualTourist;
 			sourceTree = "<group>";
@@ -142,6 +185,7 @@
 			files = (
 				74E1CEFF1F07D2010091A0E3 /* MapVC.swift in Sources */,
 				74E1CEEA1F07CFDC0091A0E3 /* AppDelegate.swift in Sources */,
+				7475F34A1F07DB1A0012C2FA /* Location.swift in Sources */,
 				74E1CEF21F07CFDC0091A0E3 /* VirtualTourist.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -306,6 +350,7 @@
 				74E1CEFD1F07CFDC0091A0E3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
