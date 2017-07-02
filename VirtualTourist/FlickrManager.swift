@@ -16,6 +16,8 @@ enum FlickrResponse {
     case error(FlickrError)
 }
 
+
+// Need to evaluate Flickr API to determine possible error values, if this even matters
 enum FlickrError {
     case noImagesForLocation(Error)
     case connectionError(Error)

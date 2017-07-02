@@ -110,13 +110,27 @@
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="PhotoCell" id="wYE-I4-blk">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="PhotoCell" id="wYE-I4-blk" customClass="PhotoCell" customModule="VirtualTourist" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                             <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Nwe-7m-37l">
+                                                    <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                                </imageView>
+                                            </subviews>
                                         </view>
+                                        <constraints>
+                                            <constraint firstAttribute="bottom" secondItem="Nwe-7m-37l" secondAttribute="bottom" id="Lzz-Z1-Qyd"/>
+                                            <constraint firstAttribute="trailing" secondItem="Nwe-7m-37l" secondAttribute="trailing" id="fWw-Ao-vLk"/>
+                                            <constraint firstItem="Nwe-7m-37l" firstAttribute="leading" secondItem="wYE-I4-blk" secondAttribute="leading" id="gEX-bW-ILm"/>
+                                            <constraint firstItem="Nwe-7m-37l" firstAttribute="top" secondItem="wYE-I4-blk" secondAttribute="top" id="uzR-iQ-SeX"/>
+                                        </constraints>
+                                        <connections>
+                                            <outlet property="image" destination="Nwe-7m-37l" id="K3Q-JU-eji"/>
+                                        </connections>
                                     </collectionViewCell>
                                 </cells>
                                 <connections>
@@ -141,6 +155,7 @@
                     </view>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
+                        <outlet property="collectionView" destination="QG3-iW-nl6" id="efv-8v-O8n"/>
                         <outlet property="mapView" destination="T4j-iD-X94" id="CSV-V9-geD"/>
                     </connections>
                 </viewController>
