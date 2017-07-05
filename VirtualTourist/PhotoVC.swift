@@ -32,19 +32,18 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         
         Loading.default.hide()
 
-        
-//        FM.default.getPhotos(forCoordinate: location.coordinate) { (flickrResponse) in
-//            switch flickrResponse {
-//            case .error:
-//                
-//                print("Error")
-//                break
-//            case .images:
-//                
-//                break
-//                
-//            }
-//        }
+        FM.default.getPhotos(forCoordinate: location.coordinate) { (flickrResponse) in
+            
+            switch flickrResponse {
+                case .error (let error):
+                    print(FM.default.handleError(error: error))
+                    break
+                
+                case .images(let images):
+                    location.photos = images
+                    break
+            }
+        }
     }
     
     func setupMap() {
