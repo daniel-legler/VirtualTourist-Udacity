@@ -19,7 +19,7 @@ class VTLocation {
         coordinate = CLLocationCoordinate2D()
     }
     
-    func photoData() -> NSMutableArray {
+    var photoData: NSMutableArray {
         
         if photos.count == 0 {
             return NSMutableArray()
@@ -40,9 +40,8 @@ class VTLocation {
             }
             
         }
-        
+
         return photosArray
-        
         
     }
 }

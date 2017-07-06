@@ -30,7 +30,9 @@ class CoreDataManager {
         
         let newLocation = NSManagedObject(entity: entity!, insertInto: context)
         
-        newLocation.setValuesForKeys(["images": location.photoData(),
+        let savedPhotoData = NSKeyedArchiver.archivedData(withRootObject: location.photoData)
+
+        newLocation.setValuesForKeys(["images": savedPhotoData,
                                       "latitude": Double(location.coordinate.latitude),
                                       "longitude": Double(location.coordinate.longitude) ])
         
@@ -41,7 +43,6 @@ class CoreDataManager {
         }
         
         // TO EXTRACT:
-//        var coreDataObject = NSKeyedArchiver.archivedData(withRootObject: location.photoData)
 //        guard let savedCoreDataObject = NSKeyedUnarchiver.unarchiveObject(with: coreDataObject) as? NSArray else {
 //            print("Couldn't find core data object")
 //            return

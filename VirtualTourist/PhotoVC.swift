@@ -27,7 +27,7 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         setupMap()
         
         for _ in 1...20 {
-            location.photos.append(UIImage())
+            location.photos.append(UIImage(named: "weather")!)
         }
         
         CDM.default.saveLocation(location: location)
@@ -77,7 +77,7 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoCell", for: indexPath) as! PhotoCell
         
-        cell.image.image = UIImage(named: "weather")
+        cell.image.image = location.photos[indexPath.row]
         
         return cell
     
