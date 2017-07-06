@@ -23,13 +23,27 @@ enum FlickrError {
     case invalidCoordinates(Error)
 }
 
+struct FlickrURL {
+    
+    let farmID: String
+    let serverID: String
+    let photoID: String
+    let secret: String
+    let size: String
+    
+    var url: URL {
+        return URL(string: "https://farm\(farmID).staticflickr.com/\(serverID)/\(photoID)_\(secret).jpg")!
+    }
+    
+}
+
 class FlickrManager {
     
     private init() {}
     
     static let `default` = FlickrManager()
     
-    func getPhotos (forCoordinate coordinate: CLLocationCoordinate2D, completion: (FlickrResponse)->()) {
+    func getPhotos (forCoordinate coordinate: CLLocationCoordinate2D, completion: @escaping (FlickrResponse)->()) {
         
         let lat = Double(coordinate.latitude)
         let lon = Double(coordinate.longitude)
@@ -39,14 +53,28 @@ class FlickrManager {
         let task = URLSession.shared.dataTask(with: url) { (data, urlResponse, error) in
             
             guard error == nil else{
-                print(error?.localizedDescription)
+                completion(.error(.connectionError(error!)))
+                print(error!.localizedDescription)
+                return
+            }
+            print("\n\n\n\n\n\n urlResponse: \n")
+            print(urlResponse)
+            print("\n\n\n\n\n\n data: \n")
+            print(data)
+            print("\n\n\n\n\n\n response: \n")
+
+            guard let response = data as? [String:Any] else {
                 return
             }
             
-            print(urlResponse)
+            print(response)
             
-            print(data)
+            let flickrURL: FlickrURL
+            
+            
+            
         }
+        task.resume()
     }
     
     func handleError (error: FlickrError) -> String {

@@ -40,7 +40,7 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
                     break
                 
                 case .images(let images):
-                    location.photos = images
+                    self.location.photos = images
                     break
             }
         }
