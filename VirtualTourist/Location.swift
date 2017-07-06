@@ -9,7 +9,7 @@
 import UIKit
 import MapKit
 
-class Location {
+class VTLocation {
     
     var photos : [UIImage]
     var coordinate: CLLocationCoordinate2D
@@ -17,5 +17,32 @@ class Location {
     init() {
         photos = [UIImage]()
         coordinate = CLLocationCoordinate2D()
+    }
+    
+    func photoData() -> NSMutableArray {
+        
+        if photos.count == 0 {
+            return NSMutableArray()
+        }
+        
+        let photosArray = NSMutableArray()
+        
+        for photo in photos {
+            
+            if let data = UIImagePNGRepresentation(photo) {
+                
+                let nsData = NSData(data: data)
+                
+                photosArray.add(nsData)
+                
+            } else {
+                print("Couldn't convert image to png data")
+            }
+            
+        }
+        
+        return photosArray
+        
+        
     }
 }

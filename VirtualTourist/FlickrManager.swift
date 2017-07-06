@@ -57,6 +57,8 @@ class FlickrManager {
                 print(error!.localizedDescription)
                 return
             }
+            
+            /* For Debugging later
             print("\n\n\n\n\n\n urlResponse: \n")
             print(urlResponse)
             print("\n\n\n\n\n\n data: \n")
@@ -68,8 +70,9 @@ class FlickrManager {
             }
             
             print(response)
+            */
             
-            let flickrURL: FlickrURL
+            // let flickrURL = FlickrURL(farmID: <#T##String#>, serverID: <#T##String#>, photoID: <#T##String#>, secret: <#T##String#>, size: <#T##String#>)
             
             
             

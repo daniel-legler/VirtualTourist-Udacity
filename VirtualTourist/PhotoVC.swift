@@ -12,7 +12,7 @@ import CoreData
 
 class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
-    var location = Location()
+    var location = VTLocation()
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var collectionView: UICollectionView!
@@ -30,20 +30,23 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
             location.photos.append(UIImage())
         }
         
+        CDM.default.saveLocation(location: location)
+        
         Loading.default.hide()
 
-        FM.default.getPhotos(forCoordinate: location.coordinate) { (flickrResponse) in
-            
-            switch flickrResponse {
-                case .error (let error):
-                    print(FM.default.handleError(error: error))
-                    break
-                
-                case .images(let images):
-                    self.location.photos = images
-                    break
-            }
-        }
+//        FM.default.getPhotos(forCoordinate: location.coordinate) { (flickrResponse) in
+//            
+//            switch flickrResponse {
+//                case .error (let error):
+//                    print(FM.default.handleError(error: error))
+//                    break
+//                
+//                case .images(let images):
+//                    self.location.photos = images
+//                    break
+//            }
+//        }
+        
     }
     
     func setupMap() {
