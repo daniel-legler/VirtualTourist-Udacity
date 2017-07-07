@@ -75,21 +75,23 @@ class CoreDataManager {
         return mapPoints
     }
     
-    func loadVTLocation (forCoordinate coordinate: CLLocationCoordinate2D) -> VTLocation {
-        
-        var vtLocation = VTLocation()
+    func loadLocationObject (forCoordinate coordinate: CLLocationCoordinate2D) -> Location? {
         
         let fetchRequest: NSFetchRequest<Location> = Location.fetchRequest()
         
-        let predicate = NSPredicate(format: "longitude == \(coordinate.longitude) AND latitude == \(coordinate.latitude)", argumentArray: nil)
-
+        let predicate = NSPredicate(format: "(longitude == %@) AND (latitude == %@)", argumentArray: [coordinate.longitude, coordinate.latitude])
+        
         fetchRequest.predicate = predicate
         
         do {
             
             let searchResults = try context.fetch(fetchRequest)
             
-            print(searchResults)
+            print("\(searchResults.count) result(s) found for that lat/lon")
+            
+            guard let location = searchResults.first else { return nil }
+            
+            return location
             
         } catch {
             
@@ -97,13 +99,32 @@ class CoreDataManager {
             print(error.localizedDescription)
             
         }
+        
+        return nil
+    }
+    
+    func loadVTLocation (forCoordinate coordinate: CLLocationCoordinate2D) -> VTLocation {
+        
+        let vtLocation = VTLocation()
+        
+        guard let location = loadLocationObject(forCoordinate: coordinate) else {
+            return VTLocation()
+        }
+        
+        vtLocation.coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
 
-//        guard let savedCoreDataObject = NSKeyedUnarchiver.unarchiveObject(with: coreDataObject) as? NSArray else {
-//            print("Couldn't find core data object")
-//            return
-//        }
-
-        return VTLocation()
+        guard let imageArray = NSKeyedUnarchiver.unarchiveObject(with: location.images! as Data) as? NSArray else {
+            print("Couldn't find core data object")
+            return vtLocation
+        }
+        
+        for imageData in imageArray {
+            guard let imageData = imageData as? Data else { print("Couldn't convert to data"); return vtLocation   }
+            guard let image = UIImage(data: imageData) else { print("Couldn't form UIImage from data"); return vtLocation }
+            vtLocation.photos.append(image)
+        }
+        
+        return vtLocation
     }
     
     

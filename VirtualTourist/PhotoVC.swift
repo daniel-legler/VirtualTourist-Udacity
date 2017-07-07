@@ -28,22 +28,27 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         setupMap()
         
         Loading.default.hide()
-
-        // DELETE UNDERSCORE TO TEST FLICKR API
-        FM.default._getPhotos(forCoordinate: location.coordinate) { (flickrResponse) in
+        
+        location = CDM.default.loadVTLocation(forCoordinate: location.coordinate)
+        
+        if location.photos.count == 0 {
             
-            switch flickrResponse {
-                case .error (let error):
-                    print(FM.default.handleError(error: error))
-                    break
-                
-                case .images(let images):
-                    self.location.photos = images
-                    break
+            // DELETE UNDERSCORE TO TEST FLICKR API
+            FM.default._getPhotos(forCoordinate: location.coordinate) { (flickrResponse) in
+    
+                switch flickrResponse {
+                    case .error (let error):
+                        print(FM.default.handleError(error: error))
+                        break
+    
+                    case .images(let images):
+                        self.location.photos = images
+                        break
+                }
+    
+                CDM.default.saveLocation(location: self.location)
+    
             }
-            
-            CDM.default.saveLocation(location: self.location)
-
         }
     }
     
@@ -82,7 +87,7 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 3//UIScreen.main.bounds.width -
+        return 3
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {

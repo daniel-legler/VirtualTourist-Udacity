@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7475F34A1F07DB1A0012C2FA /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7475F3491F07DB1A0012C2FA /* Location.swift */; };
+		7475F34A1F07DB1A0012C2FA /* VTLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7475F3491F07DB1A0012C2FA /* VTLocation.swift */; };
 		7475F34C1F07DC960012C2FA /* PhotoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7475F34B1F07DC960012C2FA /* PhotoVC.swift */; };
 		7475F34E1F07EB840012C2FA /* FlickrManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7475F34D1F07EB840012C2FA /* FlickrManager.swift */; };
 		7475F3511F07EED50012C2FA /* Loading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7475F3501F07EED50012C2FA /* Loading.swift */; };
@@ -22,7 +22,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		7475F3491F07DB1A0012C2FA /* Location.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
+		7475F3491F07DB1A0012C2FA /* VTLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VTLocation.swift; sourceTree = "<group>"; };
 		7475F34B1F07DC960012C2FA /* PhotoVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoVC.swift; sourceTree = "<group>"; };
 		7475F34D1F07EB840012C2FA /* FlickrManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlickrManager.swift; sourceTree = "<group>"; };
 		7475F3501F07EED50012C2FA /* Loading.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Loading.swift; sourceTree = "<group>"; };
@@ -60,7 +60,7 @@
 		7475F3451F07D46C0012C2FA /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				7475F3491F07DB1A0012C2FA /* Location.swift */,
+				7475F3491F07DB1A0012C2FA /* VTLocation.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -200,7 +200,7 @@
 			files = (
 				74E1CEFF1F07D2010091A0E3 /* MapVC.swift in Sources */,
 				74E1CEEA1F07CFDC0091A0E3 /* AppDelegate.swift in Sources */,
-				7475F34A1F07DB1A0012C2FA /* Location.swift in Sources */,
+				7475F34A1F07DB1A0012C2FA /* VTLocation.swift in Sources */,
 				7475F34C1F07DC960012C2FA /* PhotoVC.swift in Sources */,
 				7475F3531F08C7E20012C2FA /* PhotoCell.swift in Sources */,
 				7475F3511F07EED50012C2FA /* Loading.swift in Sources */,
