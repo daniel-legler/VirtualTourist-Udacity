@@ -21,7 +21,7 @@ class VTLocation {
     
     var photoData: NSMutableArray {
         
-        if photos.count == 0 {
+        guard photos.count > 0 else {
             return NSMutableArray()
         }
         

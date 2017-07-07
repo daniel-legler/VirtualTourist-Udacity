@@ -43,6 +43,19 @@ class FlickrManager {
     
     static let `default` = FlickrManager()
     
+    // FOR TESTING ONLY: Returns 20 of the same image
+    func _getPhotos (forCoordinate coordinate: CLLocationCoordinate2D, completion: @escaping (FlickrResponse)->()) {
+        
+        var photos = [UIImage]()
+        
+        for _ in 1...20 {
+            photos.append(UIImage(named: "weather")!)
+        }
+        
+        completion(.images(photos))
+    }
+    
+    
     func getPhotos (forCoordinate coordinate: CLLocationCoordinate2D, completion: @escaping (FlickrResponse)->()) {
         
         let lat = Double(coordinate.latitude)

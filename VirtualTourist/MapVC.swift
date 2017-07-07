@@ -23,6 +23,7 @@ class MapVC: UIViewController, MKMapViewDelegate {
         
         navigationController?.setNavigationBarHidden(true, animated: false)
         
+        reloadMapAnnotations()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -58,6 +59,24 @@ class MapVC: UIViewController, MKMapViewDelegate {
         selectedLocation = annotation.coordinate
         
         performSegue(withIdentifier: "ShowImages", sender: nil)
+        
+    }
+    
+    func reloadMapAnnotations() {
+        
+        mapView.removeAnnotations(mapView.annotations)
+        
+        let locations = CDM.default.loadMapPoints()
+        
+        for point in locations {
+            
+            let annotation = MKPointAnnotation()
+            
+            annotation.coordinate = point
+            
+            mapView.addAnnotation(annotation)
+        
+        }
         
     }
     
