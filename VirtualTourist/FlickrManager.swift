@@ -49,7 +49,7 @@ class FlickrManager {
         var photos = [UIImage]()
         
         for _ in 1...20 {
-            photos.append(UIImage(named: "weather")!)
+            photos.append(UIImage(named: "97")!)
         }
         
         completion(.images(photos))

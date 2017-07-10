@@ -30,27 +30,37 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         location = CDM.default.loadVTLocation(forCoordinate: location.coordinate)
         
         if location.photos.count == 0 {
-            
-            // DELETE UNDERSCORE TO TEST FLICKR API
-            FM.default._getPhotos(forCoordinate: location.coordinate) { (flickrResponse) in
-    
-                switch flickrResponse {
-                    case .error (let error):
-                        print(FM.default.handleError(error: error))
-                        break
-    
-                    case .images(let images):
-                        self.location.photos = images
-                        break
+            refreshPhotos(){
+                DispatchQueue.main.async {
+                    self.collectionView.reloadData()
+                    Loading.default.hide()
                 }
-    
-                CDM.default.saveLocation(location: self.location)
-    
             }
-        }
+        } else { Loading.default.hide() }
         
-        Loading.default.hide()
-
+    }
+    
+    func refreshPhotos(_ completion: @escaping ()->()) {
+        
+        // DELETE UNDERSCORE TO TEST FLICKR API
+        FM.default._getPhotos(forCoordinate: location.coordinate) { (flickrResponse) in
+            
+            switch flickrResponse {
+                
+            case .error (let error):
+                print(FM.default.handleError(error: error))
+                completion()
+                break
+                
+            case .images(let images):
+                self.location.photos = images
+                completion()
+                break
+            }
+            
+            CDM.default.saveLocation2(location: self.location)
+            
+        }
     }
     
     func setupMap() {
@@ -66,6 +76,32 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         annotation.coordinate = location.coordinate
     
         mapView.addAnnotation(annotation)
+        
+    }
+    
+    @IBAction func newCollectionButtonPressed(_ sender: Any) {
+        
+        Loading.default.show(view)
+        
+        refreshPhotos() {
+            
+            DispatchQueue.main.async {
+                
+                self.collectionView.reloadData()
+                
+                Loading.default.hide()
+            }
+        }
+    }
+    
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        location.photos.remove(at: indexPath.row)
+        
+        collectionView.deleteItems(at: [indexPath])
+        
+        CDM.default.saveLocation2(location: location)
         
     }
     
@@ -100,9 +136,4 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         let dimension: CGFloat = (UIScreen.main.bounds.width - (2 * space)) / 3.0
         return CGSize(width: dimension, height: dimension)
     }
-    
-    
-    
-    
-    
 }

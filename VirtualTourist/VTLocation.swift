@@ -19,6 +19,15 @@ class VTLocation {
         coordinate = coord
     }
     
+    var photosAsData: Data {
+        
+        var imgs = Data()
+        
+        photos.forEach { (img) in  imgs.append(UIImagePNGRepresentation(img)!) }
+        
+        return imgs
+    }
+    
     var photoData: NSMutableArray {
         
         guard photos.count > 0 else {

@@ -32,6 +32,30 @@ class CoreDataManager {
     
     // MARK: Methods
     
+    func saveLocation2(location: VTLocation) {
+        
+        let existingLocationObject = loadLocationObject(forCoordinate: location.coordinate)
+        
+        let newLocationObject = NSManagedObject(entity: locationEntity!, insertInto: context) as! Location
+        
+        let locationObject = existingLocationObject == nil ? newLocationObject : existingLocationObject!
+        
+        locationObject.setValuesForKeys(["images": location.photosAsData,
+                                         "latitude": Double(location.coordinate.latitude),
+                                         "longitude": Double(location.coordinate.longitude) ])
+        do {
+            
+            try context.save()
+            
+        } catch {
+            
+            print("Couldn't save to CoreData. \(error.localizedDescription)")
+            
+        }
+
+        
+    }
+    
     func saveLocation(location: VTLocation) {
         
         let existingLocationObject = loadLocationObject(forCoordinate: location.coordinate)
@@ -106,6 +130,31 @@ class CoreDataManager {
         }
         
         return nil
+    }
+    
+    func loadVTLocation2 (forCoordinate coordinate: CLLocationCoordinate2D) -> VTLocation {
+        
+        let vtLocation = VTLocation()
+        
+        guard let location = loadLocationObject(forCoordinate: coordinate) else {
+            return VTLocation()
+        }
+        
+        vtLocation.coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
+        
+        
+        guard let imageArray = NSKeyedUnarchiver.unarchiveObject(with: location.images! as Data) as? NSArray else {
+            print("Couldn't find core data object")
+            return vtLocation
+        }
+        
+        for imageData in imageArray {
+            guard let imageData = imageData as? Data else { print("Couldn't convert to data"); return vtLocation   }
+            guard let image = UIImage(data: imageData) else { print("Couldn't form UIImage from data"); return vtLocation }
+            vtLocation.photos.append(image)
+        }
+        
+        return vtLocation
     }
     
     func loadVTLocation (forCoordinate coordinate: CLLocationCoordinate2D) -> VTLocation {

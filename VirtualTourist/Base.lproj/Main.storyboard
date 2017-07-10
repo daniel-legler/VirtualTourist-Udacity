@@ -96,7 +96,11 @@
                                 <rect key="frame" x="0.0" y="623" width="375" height="44"/>
                                 <items>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="ewj-fk-z3g"/>
-                                    <barButtonItem title="New Collection" id="MRo-lP-tpY"/>
+                                    <barButtonItem title="New Collection" id="MRo-lP-tpY">
+                                        <connections>
+                                            <action selector="newCollectionButtonPressed:" destination="8HK-f2-VbY" id="x2v-wC-JBN"/>
+                                        </connections>
+                                    </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="gId-rX-gJP"/>
                                 </items>
                             </toolbar>

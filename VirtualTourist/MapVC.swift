@@ -53,7 +53,7 @@ class MapVC: UIViewController, MKMapViewDelegate {
             
             let location = VTLocation(coord: newAnnotation.coordinate)
             
-            CDM.default.saveLocation(location: location)
+            CDM.default.saveLocation2(location: location)
             
         }
     }
