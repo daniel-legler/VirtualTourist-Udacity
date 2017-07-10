@@ -14,9 +14,9 @@ class VTLocation {
     var photos : [UIImage]
     var coordinate: CLLocationCoordinate2D
     
-    init() {
+    init(coord: CLLocationCoordinate2D = CLLocationCoordinate2D()) {
         photos = [UIImage]()
-        coordinate = CLLocationCoordinate2D()
+        coordinate = coord
     }
     
     var photoData: NSMutableArray {

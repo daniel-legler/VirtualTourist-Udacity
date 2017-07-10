@@ -19,6 +19,7 @@ class CoreDataManager {
     private var context: NSManagedObjectContext {
         
         let ad = UIApplication.shared.delegate as! AppDelegate
+        
         return ad.persistentContainer.viewContext
         
     }
@@ -33,11 +34,15 @@ class CoreDataManager {
     
     func saveLocation(location: VTLocation) {
         
-        let newLocation = NSManagedObject(entity: locationEntity!, insertInto: context)
+        let existingLocationObject = loadLocationObject(forCoordinate: location.coordinate)
+        
+        let newLocationObject = NSManagedObject(entity: locationEntity!, insertInto: context) as! Location
+        
+        let locationObject = existingLocationObject == nil ? newLocationObject : existingLocationObject!
         
         let savedPhotoData = NSKeyedArchiver.archivedData(withRootObject: location.photoData)
 
-        newLocation.setValuesForKeys(["images": savedPhotoData,
+        locationObject.setValuesForKeys(["images": savedPhotoData,
                                       "latitude": Double(location.coordinate.latitude),
                                       "longitude": Double(location.coordinate.longitude) ])
         do {

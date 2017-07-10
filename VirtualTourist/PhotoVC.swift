@@ -23,11 +23,9 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         
         navigationController?.setNavigationBarHidden(false, animated: false)
         
-        Loading.default.show(mapView)
+        Loading.default.show(view)
         
         setupMap()
-        
-        Loading.default.hide()
         
         location = CDM.default.loadVTLocation(forCoordinate: location.coordinate)
         
@@ -50,6 +48,9 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
     
             }
         }
+        
+        Loading.default.hide()
+
     }
     
     func setupMap() {

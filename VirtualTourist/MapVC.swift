@@ -39,6 +39,8 @@ class MapVC: UIViewController, MKMapViewDelegate {
         
         if sender.state == .began {
             
+            // Add pin to Map
+            
             let mapTouchPoint = sender.location(in: mapView)
             
             let newAnnotation = MKPointAnnotation()
@@ -46,6 +48,12 @@ class MapVC: UIViewController, MKMapViewDelegate {
             newAnnotation.coordinate = mapView.convert(mapTouchPoint, toCoordinateFrom: mapView)
             
             mapView.addAnnotation(newAnnotation)
+            
+            // Save pin to CoreData
+            
+            let location = VTLocation(coord: newAnnotation.coordinate)
+            
+            CDM.default.saveLocation(location: location)
             
         }
     }
