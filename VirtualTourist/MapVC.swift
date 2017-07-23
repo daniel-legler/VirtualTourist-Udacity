@@ -28,9 +28,7 @@ class MapVC: UIViewController, MKMapViewDelegate {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
-        guard let dest = segue.destination as? PhotoVC else {
-            return
-        }
+        guard let dest = segue.destination as? PhotoVC else { return }
         
         dest.location.coordinate = selectedLocation
     }
@@ -53,7 +51,7 @@ class MapVC: UIViewController, MKMapViewDelegate {
             
             let location = VTLocation(coord: newAnnotation.coordinate)
             
-            CDM.default.saveLocation2(location: location)
+            CDM.default.createLocation(location: location)
             
         }
     }
@@ -74,7 +72,7 @@ class MapVC: UIViewController, MKMapViewDelegate {
         
         mapView.removeAnnotations(mapView.annotations)
         
-        let locations = CDM.default.loadMapPoints()
+        let locations = CDM.default.loadAllMapPoints()
         
         for point in locations {
             

@@ -9,9 +9,13 @@ import UIKit
 
 class Loading {
     
-    static let `default` = Loading()
+    static let `default` = Loading(frame: UIScreen.main.bounds)
     
-    private let activity = UIActivityIndicatorView(frame: UIScreen.main.bounds)
+    init(frame: CGRect) {
+        activity = UIActivityIndicatorView(frame: frame)
+    }
+    
+    private var activity: UIActivityIndicatorView
     
     private let loadingView = UIView(frame: UIScreen.main.bounds)
     

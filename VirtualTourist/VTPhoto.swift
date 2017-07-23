@@ -1,0 +1,27 @@
+//
+//  VTPhoto.swift
+//  VirtualTourist
+//
+//  Created by Daniel Legler on 7/22/17.
+//  Copyright © 2017 Daniel Legler. All rights reserved.
+//
+
+import UIKit
+
+class VTPhoto {
+    
+    var id: String
+    var image: UIImage
+    
+    // Initializer for loading a Photo object in CoreData
+    init(photo: Photo) {
+        self.id = photo.id ?? String()
+        self.image = UIImage(data: (photo.data ?? NSData()) as Data) ?? UIImage()
+    }
+    
+    // Initializer for creating a new Photo object in CoreData
+    init(image: UIImage) {
+        id = UUID().uuidString
+        self.image = image
+    }
+}

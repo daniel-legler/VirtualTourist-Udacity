@@ -12,12 +12,12 @@ import MapKit
 typealias FM = FlickrManager
 
 enum FlickrResponse {
-    case images([UIImage])
+    case image(UIImage)
     case error(FlickrError)
 }
 
 // Need to evaluate Flickr API to determine possible error values
-enum FlickrError {
+enum FlickrError:Error {
     case noImagesForLocation(Error)
     case connectionError(Error)
     case invalidCoordinates(Error)
@@ -46,13 +46,10 @@ class FlickrManager {
     // FOR TESTING ONLY: Returns 20 of the same image
     func _getPhotos (forCoordinate coordinate: CLLocationCoordinate2D, completion: @escaping (FlickrResponse)->()) {
         
-        var photos = [UIImage]()
-        
         for _ in 1...20 {
-            photos.append(UIImage(named: "97")!)
+            completion(.image(UIImage(named: "weather") ?? UIImage()))
         }
         
-        completion(.images(photos))
     }
     
     
@@ -61,8 +58,8 @@ class FlickrManager {
         let lat = Double(coordinate.latitude)
         let lon = Double(coordinate.longitude)
         
-        let url = URL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.geo.photosForLocation&api_key=40f3e76af5048bfe2cc40080eb87ac7a&lat=\(lat)&lon=\(lon)&format=json")!
-        
+        let url = URL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.geo.photosForLocation&api_key=99c82a1df1fd9f61e3ce8e8b4205cb12&lat=\(lat)&lon=\(lon)&format=json")!
+
         let task = URLSession.shared.dataTask(with: url) { (data, urlResponse, error) in
             
             guard error == nil else{
@@ -71,19 +68,27 @@ class FlickrManager {
                 return
             }
             
-            /* For Debugging later
-            print("\n\n\n\n\n\n urlResponse: \n")
-            print(urlResponse)
-            print("\n\n\n\n\n\n data: \n")
-            print(data)
-            print("\n\n\n\n\n\n response: \n")
-
-            guard let response = data as? [String:Any] else {
-                return
+            print(data!)
+            
+            var parsedData : [String: Any]!
+            do {
+                try parsedData = JSONSerialization.jsonObject(with: data!, options: .allowFragments) as! [String:Any]
+            } catch {
+                print(error.localizedDescription)
             }
             
-            print(response)
-            */
+//            print("\n\n\n\n\n\n urlResponse: \n")
+//            print(urlResponse)
+//            print("\n\n\n\n\n\n data: \n")
+//            print(data)
+//            print("\n\n\n\n\n\n response: \n")
+//
+//            guard let response = data as? [String:Any] else {
+//                return
+//            }
+            
+//            print(response)
+ 
             
             // let flickrURL = FlickrURL(farmID: <#T##String#>, serverID: <#T##String#>, photoID: <#T##String#>, secret: <#T##String#>, size: <#T##String#>)
             

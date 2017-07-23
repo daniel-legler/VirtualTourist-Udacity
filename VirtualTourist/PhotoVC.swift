@@ -13,6 +13,7 @@ import CoreData
 class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
     var location = VTLocation()
+    
     var isNewPin: Bool = false
     
     @IBOutlet weak var mapView: MKMapView!
@@ -27,8 +28,10 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         
         setupMap()
         
-        location = CDM.default.loadVTLocation(forCoordinate: location.coordinate)
+        guard let loadedLocation = CDM.default.loadLocation(forCoordinate: location.coordinate) else { return }
         
+        location = VTLocation(location: loadedLocation)
+
         if location.photos.count == 0 {
             refreshPhotos(){
                 DispatchQueue.main.async {
@@ -52,13 +55,13 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
                 completion()
                 break
                 
-            case .images(let images):
-                self.location.photos = images
+            case .image(let image):
+                self.location.photos.append(VTPhoto(image: image))
                 completion()
                 break
             }
             
-            CDM.default.saveLocation2(location: self.location)
+            CDM.default.saveLocation(location: self.location)
             
         }
     }
@@ -101,7 +104,7 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         
         collectionView.deleteItems(at: [indexPath])
         
-        CDM.default.saveLocation2(location: location)
+        CDM.default.saveLocation(location: location)
         
     }
     
@@ -117,7 +120,7 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoCell", for: indexPath) as! PhotoCell
         
-        cell.image.image = location.photos[indexPath.row]
+        cell.image.image = location.photos[indexPath.row].image
         
         return cell
     

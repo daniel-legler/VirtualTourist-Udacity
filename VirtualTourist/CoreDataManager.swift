@@ -10,6 +10,12 @@ import UIKit
 import MapKit
 import CoreData
 
+// Look up all map pins to display in map view
+// Add a new pin to the map view
+// Save a list of images to a pinned location
+// Save a change to the list of images
+//
+
 typealias CDM = CoreDataManager
 class CoreDataManager {
     
@@ -30,19 +36,22 @@ class CoreDataManager {
         
     }
     
-    // MARK: Methods
+    // MARK: Methods for writing data to model
     
-    func saveLocation2(location: VTLocation) {
+    // Delete one photo from a specific Location
+    // Add photos to a specific location
+    
+    
+    
+    // Create a new map pin and CoreData Location object with only the latitude and longitude set
+    
+    func createLocation(location: VTLocation) {
         
-        let existingLocationObject = loadLocationObject(forCoordinate: location.coordinate)
+        let locationObject = NSManagedObject(entity: locationEntity!, insertInto: context) as! Location
         
-        let newLocationObject = NSManagedObject(entity: locationEntity!, insertInto: context) as! Location
-        
-        let locationObject = existingLocationObject == nil ? newLocationObject : existingLocationObject!
-        
-        locationObject.setValuesForKeys(["images": location.photosAsData,
-                                         "latitude": Double(location.coordinate.latitude),
+        locationObject.setValuesForKeys(["latitude": Double(location.coordinate.latitude),
                                          "longitude": Double(location.coordinate.longitude) ])
+        
         do {
             
             try context.save()
@@ -52,23 +61,48 @@ class CoreDataManager {
             print("Couldn't save to CoreData. \(error.localizedDescription)")
             
         }
-
-        
     }
     
+//    func removePhoto(photoAsData: Data, location: Location) -> Bool {
+//        
+//        for photo in location.photos! {
+//
+//            guard let photoData = photo as? Data else { return false }
+//            
+//            print("Converted photo to data")
+//            
+//            if photoAsData == photoData {
+//                location.removeFromPhotos(photo)
+//                return true
+//            }
+//        }
+//        
+//        return false
+//    }
+
     func saveLocation(location: VTLocation) {
         
-        let existingLocationObject = loadLocationObject(forCoordinate: location.coordinate)
+        let existingLocationObject = loadLocation(forCoordinate: location.coordinate)
         
         let newLocationObject = NSManagedObject(entity: locationEntity!, insertInto: context) as! Location
         
         let locationObject = existingLocationObject == nil ? newLocationObject : existingLocationObject!
         
-        let savedPhotoData = NSKeyedArchiver.archivedData(withRootObject: location.photoData)
-
-        locationObject.setValuesForKeys(["images": savedPhotoData,
-                                      "latitude": Double(location.coordinate.latitude),
-                                      "longitude": Double(location.coordinate.longitude) ])
+        locationObject.setValuesForKeys(["latitude": Double(location.coordinate.latitude),
+                                         "longitude": Double(location.coordinate.longitude) ])
+        
+        //locationObject.photos?.addingObjects(from: location.photoData)
+        
+        locationObject.removeFromPhotos(locationObject.photos!)
+        
+        // Set the locationOject photo set equal to the location.photos photo set.
+        
+//        for photo in location.photos {
+        
+//            locationObject.addToPhotos(UIImagePNGRepresentation(photo))
+//            
+//        }
+        
         do {
             
             try context.save()
@@ -80,7 +114,57 @@ class CoreDataManager {
         }
     }
     
-    func loadMapPoints() -> [CLLocationCoordinate2D] {
+//    func saveLocation(location: VTLocation) {
+//        
+//        let existingLocationObject = loadLocationObject(forCoordinate: location.coordinate)
+//        
+//        let newLocationObject = NSManagedObject(entity: locationEntity!, insertInto: context) as! Location
+//        
+//        let locationObject = existingLocationObject == nil ? newLocationObject : existingLocationObject!
+//        
+//        let savedPhotoData = NSKeyedArchiver.archivedData(withRootObject: location.photoData)
+//
+//        locationObject.setValuesForKeys(["images": savedPhotoData,
+//                                      "latitude": Double(location.coordinate.latitude),
+//                                      "longitude": Double(location.coordinate.longitude) ])
+//        do {
+//            
+//            try context.save()
+//            
+//        } catch {
+//            
+//            print("Couldn't save to CoreData. \(error.localizedDescription)")
+//            
+//        }
+//    }
+    
+//    func loadVTLocation (forCoordinate coordinate: CLLocationCoordinate2D) -> VTLocation {
+//        
+//        let vtLocation = VTLocation()
+//        
+//        guard let location = loadLocationObject(forCoordinate: coordinate) else {
+//            return VTLocation()
+//        }
+//        
+//        vtLocation.coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
+//        
+//        guard let imageArray = NSKeyedUnarchiver.unarchiveObject(with: location.images! as Data) as? NSArray else {
+//            print("Couldn't find core data object")
+//            return vtLocation
+//        }
+//        
+//        for imageData in imageArray {
+//            guard let imageData = imageData as? Data else { print("Couldn't convert to data"); return vtLocation   }
+//            guard let image = UIImage(data: imageData) else { print("Couldn't form UIImage from data"); return vtLocation }
+//            vtLocation.photos.append(image)
+//        }
+//        
+//        return vtLocation
+//    }
+    
+    // MARK: Methods for reading data from model
+    
+    func loadAllMapPoints() -> [CLLocationCoordinate2D] {
         
         var mapPoints = [CLLocationCoordinate2D]()
         
@@ -90,7 +174,7 @@ class CoreDataManager {
             let searchResults = try context.fetch(fetchRequest)
             
             for location in searchResults {
-                
+
                 mapPoints.append(CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude))
                 
             }
@@ -104,7 +188,7 @@ class CoreDataManager {
         return mapPoints
     }
     
-    func loadLocationObject (forCoordinate coordinate: CLLocationCoordinate2D) -> Location? {
+    func loadLocation (forCoordinate coordinate: CLLocationCoordinate2D) -> Location? {
         
         let fetchRequest: NSFetchRequest<Location> = Location.fetchRequest()
         
@@ -124,68 +208,66 @@ class CoreDataManager {
             
         } catch {
             
-            print("Error loading location objects")
+            print("Error fetching location objects")
             print(error.localizedDescription)
             
         }
         
         return nil
+        
     }
     
-    func loadVTLocation2 (forCoordinate coordinate: CLLocationCoordinate2D) -> VTLocation {
-        
-        let vtLocation = VTLocation()
-        
-        guard let location = loadLocationObject(forCoordinate: coordinate) else {
-            return VTLocation()
-        }
-        
-        vtLocation.coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
-        
-        
-        guard let imageArray = NSKeyedUnarchiver.unarchiveObject(with: location.images! as Data) as? NSArray else {
-            print("Couldn't find core data object")
-            return vtLocation
-        }
-        
-        for imageData in imageArray {
-            guard let imageData = imageData as? Data else { print("Couldn't convert to data"); return vtLocation   }
-            guard let image = UIImage(data: imageData) else { print("Couldn't form UIImage from data"); return vtLocation }
-            vtLocation.photos.append(image)
-        }
-        
-        return vtLocation
-    }
-    
-    func loadVTLocation (forCoordinate coordinate: CLLocationCoordinate2D) -> VTLocation {
-        
-        let vtLocation = VTLocation()
-        
-        guard let location = loadLocationObject(forCoordinate: coordinate) else {
-            return VTLocation()
-        }
-        
-        vtLocation.coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
+//    func loadLocationObject (forCoordinate coordinate: CLLocationCoordinate2D) -> Location? {
+//        
+//        let fetchRequest: NSFetchRequest<Location> = Location.fetchRequest()
+//        
+//        let predicate = NSPredicate(format: "(longitude == %@) AND (latitude == %@)", argumentArray: [coordinate.longitude, coordinate.latitude])
+//        
+//        fetchRequest.predicate = predicate
+//        
+//        do {
+//            
+//            let searchResults = try context.fetch(fetchRequest)
+//            
+//            print("\(searchResults.count) result(s) found for that lat/lon")
+//            
+//            guard let location = searchResults.first else { return nil }
+//            
+//            return location
+//            
+//        } catch {
+//            
+//            print("Error loading location objects")
+//            print(error.localizedDescription)
+//            
+//        }
+//        
+//        return nil
+//    }
+//    
+//    func loadVTLocation2 (forCoordinate coordinate: CLLocationCoordinate2D) -> VTLocation {
+//        
+//        let vtLocation = VTLocation()
+//        
+//        guard let location = loadLocationObject(forCoordinate: coordinate) else {
+//            return VTLocation()
+//        }
+//        
+//        vtLocation.coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
+//        
+//        guard let imageArray = location.images as? NSArray else {
+//            print("Couldn't convert images to NSArray")
+//            return VTLocation()
+//        }
+//        
+//        for imageData in imageArray {
+//            guard let imageData = imageData as? Data else { print("Couldn't convert to data"); return vtLocation   }
+//            guard let image = UIImage(data: imageData) else { print("Couldn't form UIImage from data"); return vtLocation }
+//            vtLocation.photos.append(image)
+//        }
+//        
+//        return vtLocation
+//    }
 
-        guard let imageArray = NSKeyedUnarchiver.unarchiveObject(with: location.images! as Data) as? NSArray else {
-            print("Couldn't find core data object")
-            return vtLocation
-        }
-        
-        for imageData in imageArray {
-            guard let imageData = imageData as? Data else { print("Couldn't convert to data"); return vtLocation   }
-            guard let image = UIImage(data: imageData) else { print("Couldn't form UIImage from data"); return vtLocation }
-            vtLocation.photos.append(image)
-        }
-        
-        return vtLocation
-    }
-    
-    
-    
-    
-    
-    
-    
-    
+
 }
