@@ -48,39 +48,3 @@ class VTLocation {
     
 }
 
-
-//    var photosAsData: Data {
-//
-//        var imgs = Data()
-//
-//        photos.forEach { (img) in  imgs.append(img.data) }
-//
-//        return imgs
-//    }
-
-//    var photoData: NSMutableArray {
-//
-//        guard photos.count > 0 else {
-//            return NSMutableArray()
-//        }
-//
-//        let photosArray = NSMutableArray()
-//
-//        for photo in photos {
-//
-//            if let data = UIImagePNGRepresentation(photo) {
-//
-//                let nsData = NSData(data: data)
-//
-//                photosArray.add(nsData)
-//
-//            } else {
-//                print("Couldn't convert image to png data")
-//            }
-//
-//        }
-//
-//        return photosArray
-//
-//    }
-

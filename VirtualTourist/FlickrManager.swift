@@ -47,9 +47,10 @@ class FlickrManager {
     func _getPhotos (forCoordinate coordinate: CLLocationCoordinate2D, completion: @escaping (FlickrResponse)->()) {
         
         for _ in 1...20 {
-            completion(.image(UIImage(named: "weather") ?? UIImage()))
+            DispatchQueue.main.asyncAfter(deadline: .now() + 4*drand48(), execute: {
+                completion(.image(UIImage(named: "weather") ?? UIImage()))
+            })
         }
-        
     }
     
     

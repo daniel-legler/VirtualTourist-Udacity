@@ -14,8 +14,6 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
 
     var location = VTLocation()
     
-    var isNewPin: Bool = false
-    
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var collectionView: UICollectionView!
     
@@ -56,12 +54,19 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
                 break
                 
             case .image(let image):
-                self.location.photos.append(VTPhoto(image: image))
+                
+                let vtPhoto = VTPhoto(image: image)
+                
+                self.location.photos.append(vtPhoto)
+                
+                CDM.default.savePhoto(with: vtPhoto.data, to: self.location)
+                
                 completion()
+                
                 break
             }
             
-            CDM.default.saveLocation(location: self.location)
+            
             
         }
     }
@@ -92,20 +97,22 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
                 
                 self.collectionView.reloadData()
                 
-                Loading.default.hide()
+                if self.collectionView.numberOfItems(inSection: 0) == 20 {
+                    Loading.default.hide()
+                }
             }
         }
     }
     
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+
+        CDM.default.removePhoto(with: location.photos[indexPath.row].id, from: location)
         
         location.photos.remove(at: indexPath.row)
         
         collectionView.deleteItems(at: [indexPath])
-        
-        CDM.default.saveLocation(location: location)
-        
+                
     }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {

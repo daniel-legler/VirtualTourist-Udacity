@@ -13,7 +13,11 @@ class VTPhoto {
     var id: String
     var image: UIImage
     
-    // Initializer for loading a Photo object in CoreData
+    var data: Data {
+        return image.data
+    }
+    
+    // Initializer for loading a Photo object from CoreData
     init(photo: Photo) {
         self.id = photo.id ?? String()
         self.image = UIImage(data: (photo.data ?? NSData()) as Data) ?? UIImage()
