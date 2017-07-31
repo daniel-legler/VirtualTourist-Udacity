@@ -106,6 +106,20 @@ class CoreDataManager {
         }
     }
     
+    func clearPhotos(from location: VTLocation) {
+        
+        guard let locationObject = loadLocation(forCoordinate: location.coordinate) else {
+            print("Can't find the location obbject in coredata with that coordinate")
+            return
+        }
+        
+        guard locationObject.photos != nil else { return }
+        
+        locationObject.removeFromPhotos(locationObject.photos!)
+        
+        save()
+    }
+    
     // MARK: Methods for reading data from model
     
     func loadAllMapPoints() -> [CLLocationCoordinate2D] {

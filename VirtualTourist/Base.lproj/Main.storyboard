@@ -124,16 +124,22 @@
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Nwe-7m-37l">
                                                     <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                                 </imageView>
+                                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="An9-pT-JCA">
+                                                    <rect key="frame" x="15" y="15" width="20" height="20"/>
+                                                </activityIndicatorView>
                                             </subviews>
                                         </view>
                                         <constraints>
                                             <constraint firstAttribute="bottom" secondItem="Nwe-7m-37l" secondAttribute="bottom" id="Lzz-Z1-Qyd"/>
+                                            <constraint firstItem="An9-pT-JCA" firstAttribute="centerX" secondItem="wYE-I4-blk" secondAttribute="centerX" id="Tlk-q1-6FY"/>
+                                            <constraint firstItem="An9-pT-JCA" firstAttribute="centerY" secondItem="wYE-I4-blk" secondAttribute="centerY" id="b7T-G2-hy1"/>
                                             <constraint firstAttribute="trailing" secondItem="Nwe-7m-37l" secondAttribute="trailing" id="fWw-Ao-vLk"/>
                                             <constraint firstItem="Nwe-7m-37l" firstAttribute="leading" secondItem="wYE-I4-blk" secondAttribute="leading" id="gEX-bW-ILm"/>
                                             <constraint firstItem="Nwe-7m-37l" firstAttribute="top" secondItem="wYE-I4-blk" secondAttribute="top" id="uzR-iQ-SeX"/>
                                         </constraints>
                                         <connections>
                                             <outlet property="image" destination="Nwe-7m-37l" id="K3Q-JU-eji"/>
+                                            <outlet property="loading" destination="An9-pT-JCA" id="9NP-kc-wqc"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>
@@ -161,6 +167,7 @@
                     <connections>
                         <outlet property="collectionView" destination="QG3-iW-nl6" id="efv-8v-O8n"/>
                         <outlet property="mapView" destination="T4j-iD-X94" id="CSV-V9-geD"/>
+                        <outlet property="newCollectionButton" destination="MRo-lP-tpY" id="gSP-st-uVN"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nyM-Qz-eMB" userLabel="First Responder" sceneMemberID="firstResponder"/>

@@ -21,9 +21,7 @@ class VTLocation {
     var coordinate: CLLocationCoordinate2D
     
     var images: [UIImage] {
-        return photos.map({ (vtphoto) -> UIImage in
-            return vtphoto.image
-        })
+        return photos.map({ $0.image })
     }
     
     init(location: Location) {

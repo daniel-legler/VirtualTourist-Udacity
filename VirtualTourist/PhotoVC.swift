@@ -16,6 +16,7 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet weak var newCollectionButton: UIBarButtonItem!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,7 +44,14 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
     
     func refreshPhotos(_ completion: @escaping ()->()) {
         
+        // Clear photos from CoreData
+        CDM.default.clearPhotos(from: location)
+        
+        // Clear photos from this location instance
+        location.photos = []
+        
         // DELETE UNDERSCORE TO TEST FLICKR API
+        // Download new photos from Flickr
         FM.default._getPhotos(forCoordinate: location.coordinate) { (flickrResponse) in
             
             switch flickrResponse {
@@ -66,8 +74,6 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
                 break
             }
             
-            
-            
         }
     }
     
@@ -89,30 +95,37 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
     
     @IBAction func newCollectionButtonPressed(_ sender: Any) {
         
-        Loading.default.show(view)
-        
         refreshPhotos() {
             
             DispatchQueue.main.async {
                 
                 self.collectionView.reloadData()
                 
-                if self.collectionView.numberOfItems(inSection: 0) == 20 {
-                    Loading.default.hide()
-                }
+                self.newCollectionButton.isEnabled = self.location.photos.count == 20 ? true : false
+
             }
         }
     }
     
+    // MARK: CollectionView Methods
+    
+    // Cells can be in 1 of 3 states:
+    // 1. Displaying an image
+    // 2. Loading an image
+    // 3. Empty because a user deleted them
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 
         CDM.default.removePhoto(with: location.photos[indexPath.row].id, from: location)
         
         location.photos.remove(at: indexPath.row)
+
         
-        collectionView.deleteItems(at: [indexPath])
-                
+     /*   guard let cell = collectionView.cellForItem(at: indexPath) as? PhotoCell else { return }
+        cell.setEmpty()
+        collectionView.moveItem(at: indexPath, to: IndexPath(item: 19, section: 0))
+    */
+         
     }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -120,14 +133,19 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return location.photos.count
+        return 20
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoCell", for: indexPath) as! PhotoCell
         
-        cell.image.image = location.photos[indexPath.row].image
+        if location.photos.count <= indexPath.row {
+            cell.setLoading()
+        } else {
+            cell.setLoaded()
+            cell.image.image = location.photos[indexPath.row].image
+        }
         
         return cell
     
