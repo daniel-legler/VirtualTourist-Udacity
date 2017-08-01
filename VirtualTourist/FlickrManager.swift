@@ -23,16 +23,15 @@ enum FlickrError:Error {
     case invalidCoordinates(Error)
 }
 
-struct FlickrURL {
+struct FlickrPhotoURL {
     
     let farmID: String
     let serverID: String
     let photoID: String
     let secret: String
-    let size: String
     
     var url: URL {
-        return URL(string: "https://farm\(farmID).staticflickr.com/\(serverID)/\(photoID)_\(secret).jpg")!
+        return URL(string: "https://farm\(farmID).staticflickr.com/\(serverID)/\(photoID)_\(secret)_n.jpg")!
     }
     
 }
@@ -59,7 +58,7 @@ class FlickrManager {
         let lat = Double(coordinate.latitude)
         let lon = Double(coordinate.longitude)
         
-        let url = URL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.geo.photosForLocation&api_key=99c82a1df1fd9f61e3ce8e8b4205cb12&lat=\(lat)&lon=\(lon)&format=json")!
+        let url = URL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=7c9469e15a26e98a968eb4a9580f132d&lat=\(lat)&lon=\(lon)&format=json&nojsoncallback=1")!
 
         let task = URLSession.shared.dataTask(with: url) { (data, urlResponse, error) in
             
@@ -69,8 +68,6 @@ class FlickrManager {
                 return
             }
             
-            print(data!)
-            
             var parsedData : [String: Any]!
             do {
                 try parsedData = JSONSerialization.jsonObject(with: data!, options: .allowFragments) as! [String:Any]
@@ -78,21 +75,22 @@ class FlickrManager {
                 print(error.localizedDescription)
             }
             
-//            print("\n\n\n\n\n\n urlResponse: \n")
-//            print(urlResponse)
-//            print("\n\n\n\n\n\n data: \n")
-//            print(data)
-//            print("\n\n\n\n\n\n response: \n")
-//
-//            guard let response = data as? [String:Any] else {
-//                return
-//            }
+            guard let photosObj = parsedData["photos"] as? [String:Any] else { print("Couldn't get photos"); return }
+            guard let photos = photosObj["photo"] as? [[String:Any]] else { return }
             
-//            print(response)
- 
-            
-            // let flickrURL = FlickrURL(farmID: <#T##String#>, serverID: <#T##String#>, photoID: <#T##String#>, secret: <#T##String#>, size: <#T##String#>)
-            
+            for photo in photos {
+                
+                guard let farmID = photo["farm"] as? String else { return }
+                guard let serverID = photo["server"] as? String else { return }
+                guard let photoID = photo["id"] as? String else { return }
+                guard let secret = photo["secret"] as? String else { return }
+                
+                let flickrURL = FlickrPhotoURL(farmID: farmID , serverID: serverID, photoID: photoID, secret: secret)
+                
+                
+                
+                print(photo)
+            }
             
             
         }

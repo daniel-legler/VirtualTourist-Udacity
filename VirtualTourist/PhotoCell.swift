@@ -17,15 +17,18 @@ class PhotoCell: UICollectionViewCell {
         self.loading.isHidden = false
         self.loading.startAnimating()
         self.image.image = UIImage()
+        self.isUserInteractionEnabled = false
     }
     
     func setLoaded() {
-        self.loading.isHidden = true
         self.loading.stopAnimating()
+        self.isUserInteractionEnabled = true
+
     }
     
     func setEmpty() {
-        self.loading.isHidden = true
+        self.loading.stopAnimating()
         self.image.image = UIImage()
+        self.isUserInteractionEnabled = false
     }
 }

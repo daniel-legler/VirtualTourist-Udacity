@@ -13,6 +13,7 @@ import CoreData
 class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
     var location = VTLocation()
+    var isLoading: Bool = false
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var collectionView: UICollectionView!
@@ -23,26 +24,30 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         
         navigationController?.setNavigationBarHidden(false, animated: false)
         
-        Loading.default.show(view)
-        
         setupMap()
         
         guard let loadedLocation = CDM.default.loadLocation(forCoordinate: location.coordinate) else { return }
         
         location = VTLocation(location: loadedLocation)
 
-        if location.photos.count == 0 {
+        guard location.photos.count != 0 else {
+            
             refreshPhotos(){
                 DispatchQueue.main.async {
                     self.collectionView.reloadData()
-                    Loading.default.hide()
+                    self.isLoading = self.location.photos.count == 20 ? false : true
                 }
             }
-        } else { Loading.default.hide() }
+            
+            return
+            
+        }
         
     }
     
     func refreshPhotos(_ completion: @escaping ()->()) {
+        
+        isLoading = true
         
         // Clear photos from CoreData
         CDM.default.clearPhotos(from: location)
@@ -50,9 +55,8 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         // Clear photos from this location instance
         location.photos = []
         
-        // DELETE UNDERSCORE TO TEST FLICKR API
         // Download new photos from Flickr
-        FM.default._getPhotos(forCoordinate: location.coordinate) { (flickrResponse) in
+        FM.default.getPhotos(forCoordinate: location.coordinate) { (flickrResponse) in
             
             switch flickrResponse {
                 
@@ -95,13 +99,22 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
     
     @IBAction func newCollectionButtonPressed(_ sender: Any) {
         
+        Loading.default.show(view)
+        
         refreshPhotos() {
             
             DispatchQueue.main.async {
                 
+                Loading.default.hide()
+
                 self.collectionView.reloadData()
                 
-                self.newCollectionButton.isEnabled = self.location.photos.count == 20 ? true : false
+                if self.location.photos.count == 20 {
+                    
+                    self.newCollectionButton.isEnabled = true
+                    self.isLoading = false
+
+                }
 
             }
         }
@@ -119,12 +132,12 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         CDM.default.removePhoto(with: location.photos[indexPath.row].id, from: location)
         
         location.photos.remove(at: indexPath.row)
-
         
-     /*   guard let cell = collectionView.cellForItem(at: indexPath) as? PhotoCell else { return }
+        guard let cell = collectionView.cellForItem(at: indexPath) as? PhotoCell else { return }
+        
         cell.setEmpty()
+        
         collectionView.moveItem(at: indexPath, to: IndexPath(item: 19, section: 0))
-    */
          
     }
     
@@ -141,7 +154,16 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoCell", for: indexPath) as! PhotoCell
         
         if location.photos.count <= indexPath.row {
-            cell.setLoading()
+            if isLoading {
+                
+                cell.setLoading()
+                
+            } else {
+                
+                cell.setEmpty()
+                
+            }
+            
         } else {
             cell.setLoaded()
             cell.image.image = location.photos[indexPath.row].image
