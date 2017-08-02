@@ -22,30 +22,36 @@ class CoreDataManager {
     // MARK: Properties
     static let `default` = CoreDataManager()
     
-    private var context: NSManagedObjectContext {
-        
-        let ad = UIApplication.shared.delegate as! AppDelegate
+    let ad = UIApplication.shared.delegate as! AppDelegate
+    
+    var readContext: NSManagedObjectContext {
         
         return ad.persistentContainer.viewContext
         
     }
     
+    private var writeContext: NSManagedObjectContext {
+        
+        return ad.persistentContainer.newBackgroundContext()
+        
+    }
+    
     private var locationEntity: NSEntityDescription? {
         
-        return NSEntityDescription.entity(forEntityName: "Location", in: context)
+        return NSEntityDescription.entity(forEntityName: "Location", in: readContext)
         
     }
     
     private var photoEntity: NSEntityDescription? {
         
-        return NSEntityDescription.entity(forEntityName: "Photo", in: context)
+        return NSEntityDescription.entity(forEntityName: "Photo", in: readContext)
         
     }
     
     // MARK: Methods for modifying data
     
-    private func save() {
-        do { try self.context.save() }
+    private func save(context: NSManagedObjectContext) {
+        do { try context.save() }
         catch { print("Couldn't save to CoreData. \(error.localizedDescription)") }
     }
     
@@ -54,19 +60,23 @@ class CoreDataManager {
     // Create a new map pin and CoreData Location object with only the latitude and longitude set
     func createLocation(location: VTLocation) {
         
+        let context = writeContext
+        
         let locationObject = NSManagedObject(entity: locationEntity!, insertInto: context) as! Location
         
         locationObject.setValuesForKeys(["latitude": Double(location.coordinate.latitude),
                                          "longitude": Double(location.coordinate.longitude) ])
         
-        save()
+        save(context: context)
     }
     
     
     // Add photos to a specific location
     func savePhoto(with data: Data, to location: VTLocation) {
         
-        guard let locationObject = loadLocation(forCoordinate: location.coordinate) else {
+        let context = writeContext
+        
+        guard let locationObject = loadLocation(forCoordinate: location.coordinate, context: context) else {
             print("Can't find the location obbject in coredata with that coordinate")
             return
         }
@@ -79,7 +89,7 @@ class CoreDataManager {
         
         locationObject.addToPhotos(photoObject)
         
-        save()
+        save(context: context)
         
     }
     
@@ -87,7 +97,9 @@ class CoreDataManager {
     // Delete one photo from a specific Location
     func removePhoto(with id: String, from location: VTLocation) {
         
-        guard let locationObject = loadLocation(forCoordinate: location.coordinate) else {
+        let context = writeContext
+        
+        guard let locationObject = loadLocation(forCoordinate: location.coordinate, context: context) else {
             print("Can't find the location obbject in coredata with that coordinate")
             return
         }
@@ -100,7 +112,7 @@ class CoreDataManager {
                 
                 locationObject.removeFromPhotos(photo)
                 
-                save()
+                save(context: context)
                 
             }
         }
@@ -108,7 +120,9 @@ class CoreDataManager {
     
     func clearPhotos(from location: VTLocation) {
         
-        guard let locationObject = loadLocation(forCoordinate: location.coordinate) else {
+        let context = writeContext
+        
+        guard let locationObject = loadLocation(forCoordinate: location.coordinate, context: context) else {
             print("Can't find the location obbject in coredata with that coordinate")
             return
         }
@@ -117,7 +131,7 @@ class CoreDataManager {
         
         locationObject.removeFromPhotos(locationObject.photos!)
         
-        save()
+        save(context: context)
     }
     
     // MARK: Methods for reading data from model
@@ -129,7 +143,7 @@ class CoreDataManager {
         let fetchRequest: NSFetchRequest<Location> = Location.fetchRequest()
         
         do {
-            let searchResults = try context.fetch(fetchRequest)
+            let searchResults = try readContext.fetch(fetchRequest)
             
             for location in searchResults {
 
@@ -146,7 +160,7 @@ class CoreDataManager {
         return mapPoints
     }
     
-    func loadLocation (forCoordinate coordinate: CLLocationCoordinate2D) -> Location? {
+    func loadLocation (forCoordinate coordinate: CLLocationCoordinate2D, context: NSManagedObjectContext) -> Location? {
         
         let fetchRequest: NSFetchRequest<Location> = Location.fetchRequest()
         
@@ -157,8 +171,7 @@ class CoreDataManager {
         do {
             
             let searchResults = try context.fetch(fetchRequest)
-            
-            print("\(searchResults.count) result(s) found for that lat/lon")
+//            print("\(searchResults.count) result(s) found for that lat/lon")
             
             guard let location = searchResults.first else { return nil }
             

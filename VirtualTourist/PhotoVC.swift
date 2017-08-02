@@ -26,7 +26,7 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         
         setupMap()
         
-        guard let loadedLocation = CDM.default.loadLocation(forCoordinate: location.coordinate) else { return }
+        guard let loadedLocation = CDM.default.loadLocation(forCoordinate: location.coordinate, context: CDM.default.readContext) else { return }
         
         location = VTLocation(location: loadedLocation)
 
@@ -54,6 +54,8 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         
         // Clear photos from this location instance
         location.photos = []
+        
+        collectionView.reloadData()
         
         // Download new photos from Flickr
         FM.default.getPhotos(forCoordinate: location.coordinate) { (flickrResponse) in

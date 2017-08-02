@@ -16,7 +16,6 @@ enum FlickrResponse {
     case error(FlickrError)
 }
 
-// Need to evaluate Flickr API to determine possible error values
 enum FlickrError:Error {
     case noImagesForLocation(Error)
     case noImageAtUrl(Error)
@@ -42,24 +41,13 @@ class FlickrManager {
     private init() {}
     
     static let `default` = FlickrManager()
-    
-    // FOR TESTING ONLY: Returns 20 of the same image
-    func _getPhotos (forCoordinate coordinate: CLLocationCoordinate2D, completion: @escaping (FlickrResponse)->()) {
-        
-        for _ in 1...20 {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 4*drand48(), execute: {
-                completion(.image(UIImage(named: "weather") ?? UIImage()))
-            })
-        }
-    }
-    
-    
+
     func getPhotos (forCoordinate coordinate: CLLocationCoordinate2D, completion: @escaping (FlickrResponse)->()) {
         
         let lat = Double(coordinate.latitude)
         let lon = Double(coordinate.longitude)
         
-        let url = URL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=99c82a1df1fd9f61e3ce8e8b4205cb12&lat=\(lat)&lon=\(lon)&per_page=20&format=json&nojsoncallback=1")!
+        let url = URL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=99c82a1df1fd9f61e3ce8e8b4205cb12&lat=\(lat)&lon=\(lon)&per_page=20&radius=32&format=json&nojsoncallback=1")!
 
         let task = URLSession.shared.dataTask(with: url) { (data, urlResponse, error) in
             
@@ -111,15 +99,17 @@ class FlickrManager {
         task.resume()
     }
     
-    func handleError (error: FlickrError) -> String {
-        return "There was an error downloading images"
-        
-//        switch error {
-//            case .connectionError(let error):
-//                return "Connection Error"
-//            case .noImagesForLocation(let error):
-//                return "No images found near that location"
-//        }
+    func handleError (error: FlickrError) -> String {        
+        switch error {
+            case .connectionError(_):
+                return "Connection Error"
+            case .noImagesForLocation(_):
+                return "No images found near that location"
+            case .noImageAtUrl(_):
+                return "Not a valid image URL"
+            case .invalidCoordinates(_):
+                return "Invalid coordinates from map"
+        }
         
     }
     
