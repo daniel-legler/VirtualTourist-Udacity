@@ -19,6 +19,7 @@ enum FlickrResponse {
 // Need to evaluate Flickr API to determine possible error values
 enum FlickrError:Error {
     case noImagesForLocation(Error)
+    case noImageAtUrl(Error)
     case connectionError(Error)
     case invalidCoordinates(Error)
 }
@@ -58,13 +59,13 @@ class FlickrManager {
         let lat = Double(coordinate.latitude)
         let lon = Double(coordinate.longitude)
         
-        let url = URL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=7c9469e15a26e98a968eb4a9580f132d&lat=\(lat)&lon=\(lon)&format=json&nojsoncallback=1")!
+        let url = URL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=99c82a1df1fd9f61e3ce8e8b4205cb12&lat=\(lat)&lon=\(lon)&per_page=20&format=json&nojsoncallback=1")!
 
         let task = URLSession.shared.dataTask(with: url) { (data, urlResponse, error) in
             
             guard error == nil else{
-                completion(.error(.connectionError(error!)))
                 print(error!.localizedDescription)
+                completion(.error(.connectionError(error!)))
                 return
             }
             
@@ -75,21 +76,34 @@ class FlickrManager {
                 print(error.localizedDescription)
             }
             
+//            print(parsedData)
+            
             guard let photosObj = parsedData["photos"] as? [String:Any] else { print("Couldn't get photos"); return }
             guard let photos = photosObj["photo"] as? [[String:Any]] else { return }
             
             for photo in photos {
                 
-                guard let farmID = photo["farm"] as? String else { return }
-                guard let serverID = photo["server"] as? String else { return }
-                guard let photoID = photo["id"] as? String else { return }
-                guard let secret = photo["secret"] as? String else { return }
+                let fID = photo["farm"]!
+                guard let serverID = photo["server"]! as? String else { print("server"); return }
+                guard let photoID = photo["id"]! as? String else { print("id"); return }
+                guard let secret = photo["secret"]! as? String else { print("secret"); return }
                 
-                let flickrURL = FlickrPhotoURL(farmID: farmID , serverID: serverID, photoID: photoID, secret: secret)
+                let flickrURL = FlickrPhotoURL(farmID: String(describing: fID) , serverID: serverID, photoID: photoID, secret: secret)
+
+                let photoTask = URLSession.shared.dataTask(with: flickrURL.url, completionHandler: { (data, urlResponse, error) in
+                    
+                    guard let data = data else { return }
+                    
+                    let image = UIImage(data: data)
+                    
+                    let flickrResponse = image != nil ? FlickrResponse.image(image!) : FlickrResponse.error(.noImageAtUrl(error!))
+                    
+                    completion(flickrResponse)
+                    
+                })
                 
+                photoTask.resume()
                 
-                
-                print(photo)
             }
             
             
