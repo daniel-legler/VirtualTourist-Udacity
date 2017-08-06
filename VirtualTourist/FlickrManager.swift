@@ -50,9 +50,7 @@ class FlickrManager {
         
         let lat = Double(coordinate.latitude)
         let lon = Double(coordinate.longitude)
-        
-        print(page)
-        
+                
         let url = URL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=99c82a1df1fd9f61e3ce8e8b4205cb12&lat=\(lat)&lon=\(lon)&page=\(page)&per_page=20&radius=32&format=json&nojsoncallback=1")!
 
         let task = URLSession.shared.dataTask(with: url) { (data, urlResponse, error) in

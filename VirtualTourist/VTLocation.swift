@@ -13,6 +13,13 @@ extension UIImage {
     var data: Data {
         return UIImagePNGRepresentation(self) ?? Data()
     }
+    
+    static func ==(lhs: UIImage, rhs: UIImage) -> Bool {
+        if let lhsData = UIImagePNGRepresentation(lhs), let rhsData = UIImagePNGRepresentation(rhs) {
+            return lhsData == rhsData
+        }
+        return false
+    }
 }
 
 extension Location {
@@ -38,35 +45,4 @@ extension Location {
         return images
     }
 }
-
-//class VTLocation {
-//    
-//    var photos: [VTPhoto]
-//    var coordinate: CLLocationCoordinate2D
-//    
-//    var images: [UIImage] {
-//        return photos.map({ $0.image })
-//    }
-//    
-//    init(location: Location) {
-//        
-//        coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
-//        
-//        photos = []
-//
-//        guard let locationPhotos = location.photos else { return }
-//        
-//        for case let photo as Photo in locationPhotos.allObjects {
-//            
-//            photos.append(VTPhoto(photo: photo))
-//            
-//        }
-//    }
-//    
-//    init(coord: CLLocationCoordinate2D = CLLocationCoordinate2D()) {
-//        photos = []
-//        coordinate = coord
-//    }
-//    
-//}
 

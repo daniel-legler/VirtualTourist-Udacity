@@ -105,7 +105,7 @@ class CoreDataManager {
             for case let photo as Photo in locationObject.photos! {
                 
                 if photo.image() == withImage {
-                    
+                    print("Found image to delete")
                     readContext.delete(photo)
                     
                     self.save(context: readContext)
