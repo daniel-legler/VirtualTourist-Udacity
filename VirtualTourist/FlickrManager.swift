@@ -36,22 +36,23 @@ struct FlickrPhotoURL {
     
 }
 
+extension Int {
+    func rand() -> Int {
+        let rnd = Int(arc4random_uniform(UInt32(self)))
+        return rnd == self ? self - 1 : rnd
+    }
+}
+
 class FlickrManager {
     
     static let `default` = FlickrManager()
-    
-    private var availablePages: Int?
-    
-    private var page: Int {
-        return availablePages == nil ? 1 : Int(arc4random_uniform(UInt32(availablePages!)))
-    }
     
     func getPhotos (forCoordinate coordinate: CLLocationCoordinate2D, completion: @escaping (FlickrResponse)->()) {
         
         let lat = Double(coordinate.latitude)
         let lon = Double(coordinate.longitude)
                 
-        let url = URL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=99c82a1df1fd9f61e3ce8e8b4205cb12&lat=\(lat)&lon=\(lon)&page=\(page)&per_page=20&radius=32&format=json&nojsoncallback=1")!
+        let url = URL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=99c82a1df1fd9f61e3ce8e8b4205cb12&lat=\(lat)&lon=\(lon)&per_page=500&radius=32&format=json&nojsoncallback=1")!
 
         let task = URLSession.shared.dataTask(with: url) { (data, urlResponse, error) in
             
@@ -71,9 +72,15 @@ class FlickrManager {
 //            print(parsedData)
             
             guard let photosObj = parsedData["photos"] as? [String:Any] else { print("Couldn't get photos"); return }
-            guard let photos = photosObj["photo"] as? [[String:Any]] else { return }
+            guard let allPhotos = photosObj["photo"] as? [[String:Any]] else { return }
             
-            self.availablePages = photosObj["pages"] as? Int
+//            print("\(allPhotos.count) photos found")
+            
+            var photos = [[String:Any]]()
+            
+            for _ in 1...20 {
+                photos.append(allPhotos[allPhotos.count.rand()])
+            }
             
             for photo in photos {
                 
@@ -83,29 +90,35 @@ class FlickrManager {
                 guard let secret = photo["secret"]! as? String else { print("secret"); return }
                 
                 let flickrURL = FlickrPhotoURL(farmID: String(describing: fID) , serverID: serverID, photoID: photoID, secret: secret)
-
-                let photoTask = URLSession.shared.dataTask(with: flickrURL.url, completionHandler: { (data, urlResponse, error) in
-                    
-                    guard let data = data else { return }
-                    
-                    let image = UIImage(data: data)
-                    
-                    let flickrResponse = image != nil ? FlickrResponse.image(image!) : FlickrResponse.error(.noImageAtUrl(error!))
-                    
+                
+                self.downloadFlickrImage(url: flickrURL.url, completion: { (flickrResponse) in
                     completion(flickrResponse)
-                    
                 })
-                
-                photoTask.resume()
-                
             }
-            
-            
         }
         task.resume()
     }
     
-    func handleError (error: FlickrError) -> String {        
+    
+    func downloadFlickrImage(url: URL, completion: @escaping (FlickrResponse)->()) {
+        
+        let photoTask = URLSession.shared.dataTask(with: url, completionHandler: { (data, urlResponse, error) in
+            
+            guard let data = data else { return }
+            
+            let image = UIImage(data: data)
+            
+            let flickrResponse = image != nil ? FlickrResponse.image(image!) : FlickrResponse.error(.noImageAtUrl(error!))
+            
+            completion(flickrResponse)
+            
+        })
+        
+        photoTask.resume()
+
+    }
+    
+    func handleError (error: FlickrError) -> String {
         switch error {
             case .connectionError(_):
                 return "Connection Error"
@@ -118,8 +131,4 @@ class FlickrManager {
         }
         
     }
-    
-    
-    
-    
 }

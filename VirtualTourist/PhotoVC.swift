@@ -27,7 +27,7 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         navigationController?.setNavigationBarHidden(false, animated: false)
         
         setupMap()
-        
+                
         guard let location = CDM.default.loadLocation(forCoordinate: coordinate, context: CDM.default.readContext) else { return }
         
         images = location.images()
