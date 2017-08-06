@@ -30,7 +30,8 @@ class MapVC: UIViewController, MKMapViewDelegate {
         
         guard let dest = segue.destination as? PhotoVC else { return }
         
-        dest.location.coordinate = selectedLocation
+        dest.coordinate = selectedLocation
+        
     }
     
     @IBAction func addPin(_ sender: UILongPressGestureRecognizer) {
@@ -49,9 +50,7 @@ class MapVC: UIViewController, MKMapViewDelegate {
             
             // Save pin to CoreData
             
-            let location = VTLocation(coord: newAnnotation.coordinate)
-            
-            CDM.default.createLocation(location: location)
+            CDM.default.createLocation(atCoordinate: newAnnotation.coordinate)
             
         }
     }

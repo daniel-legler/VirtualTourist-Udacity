@@ -38,16 +38,22 @@ struct FlickrPhotoURL {
 
 class FlickrManager {
     
-    private init() {}
-    
     static let `default` = FlickrManager()
-
+    
+    private var availablePages: Int?
+    
+    private var page: Int {
+        return availablePages == nil ? 1 : Int(arc4random_uniform(UInt32(availablePages!)))
+    }
+    
     func getPhotos (forCoordinate coordinate: CLLocationCoordinate2D, completion: @escaping (FlickrResponse)->()) {
         
         let lat = Double(coordinate.latitude)
         let lon = Double(coordinate.longitude)
         
-        let url = URL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=99c82a1df1fd9f61e3ce8e8b4205cb12&lat=\(lat)&lon=\(lon)&per_page=20&radius=32&format=json&nojsoncallback=1")!
+        print(page)
+        
+        let url = URL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=99c82a1df1fd9f61e3ce8e8b4205cb12&lat=\(lat)&lon=\(lon)&page=\(page)&per_page=20&radius=32&format=json&nojsoncallback=1")!
 
         let task = URLSession.shared.dataTask(with: url) { (data, urlResponse, error) in
             
@@ -68,6 +74,8 @@ class FlickrManager {
             
             guard let photosObj = parsedData["photos"] as? [String:Any] else { print("Couldn't get photos"); return }
             guard let photos = photosObj["photo"] as? [[String:Any]] else { return }
+            
+            self.availablePages = photosObj["pages"] as? Int
             
             for photo in photos {
                 

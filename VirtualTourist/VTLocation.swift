@@ -15,34 +15,58 @@ extension UIImage {
     }
 }
 
-class VTLocation {
+extension Location {
     
-    var photos: [VTPhoto]
-    var coordinate: CLLocationCoordinate2D
-    
-    var images: [UIImage] {
-        return photos.map({ $0.image })
+    func coordinate() -> CLLocationCoordinate2D {
+        
+        return CLLocationCoordinate2D(latitude: self.latitude, longitude: self.longitude)
+        
     }
     
-    init(location: Location) {
+    func images() -> [UIImage] {
         
-        coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
+        guard self.photos != nil else { return [] }
         
-        photos = []
-
-        guard let locationPhotos = location.photos else { return }
+        var images = [UIImage]()
         
-        for case let photo as Photo in locationPhotos.allObjects {
+        for case let photo as Photo in self.photos! {
             
-            photos.append(VTPhoto(photo: photo))
+            images.append(photo.image())
             
         }
+        
+        return images
     }
-    
-    init(coord: CLLocationCoordinate2D = CLLocationCoordinate2D()) {
-        photos = []
-        coordinate = coord
-    }
-    
 }
+
+//class VTLocation {
+//    
+//    var photos: [VTPhoto]
+//    var coordinate: CLLocationCoordinate2D
+//    
+//    var images: [UIImage] {
+//        return photos.map({ $0.image })
+//    }
+//    
+//    init(location: Location) {
+//        
+//        coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
+//        
+//        photos = []
+//
+//        guard let locationPhotos = location.photos else { return }
+//        
+//        for case let photo as Photo in locationPhotos.allObjects {
+//            
+//            photos.append(VTPhoto(photo: photo))
+//            
+//        }
+//    }
+//    
+//    init(coord: CLLocationCoordinate2D = CLLocationCoordinate2D()) {
+//        photos = []
+//        coordinate = coord
+//    }
+//    
+//}
 

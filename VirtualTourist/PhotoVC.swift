@@ -12,8 +12,10 @@ import CoreData
 
 class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
-    var location = VTLocation()
     var isLoading: Bool = false
+    
+    var coordinate = CLLocationCoordinate2D()
+    var images = [UIImage]()
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var collectionView: UICollectionView!
@@ -26,16 +28,16 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         
         setupMap()
         
-        guard let loadedLocation = CDM.default.loadLocation(forCoordinate: location.coordinate, context: CDM.default.readContext) else { return }
+        guard let location = CDM.default.loadLocation(forCoordinate: coordinate, context: CDM.default.readContext) else { return }
         
-        location = VTLocation(location: loadedLocation)
-
-        guard location.photos.count != 0 else {
+        images = location.images()
+        
+        guard images.count != 0 else {
             
             refreshPhotos(){
                 DispatchQueue.main.async {
                     self.collectionView.reloadData()
-                    self.isLoading = self.location.photos.count == 20 ? false : true
+                    self.isLoading = self.images.count == 20 ? false : true
                 }
             }
             
@@ -50,15 +52,15 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         isLoading = true
         
         // Clear photos from CoreData
-        CDM.default.clearPhotos(from: location)
+        CDM.default.clearPhotos(atCoordinate: coordinate)
         
         // Clear photos from this location instance
-        location.photos = []
+        images = []
         
         collectionView.reloadData()
         
         // Download new photos from Flickr
-        FM.default.getPhotos(forCoordinate: location.coordinate) { (flickrResponse) in
+        FM.default.getPhotos(forCoordinate: coordinate) { (flickrResponse) in
             
             switch flickrResponse {
                 
@@ -69,11 +71,9 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
                 
             case .image(let image):
                 
-                let vtPhoto = VTPhoto(image: image)
+                self.images.append(image)
                 
-                self.location.photos.append(vtPhoto)
-                
-                CDM.default.savePhoto(with: vtPhoto.data, to: self.location)
+                CDM.default.addNewImage(image: image, atCoordinate: self.coordinate)
                 
                 completion()
                 
@@ -87,13 +87,13 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         
         let span = MKCoordinateSpanMake(0.01, 0.01)
         
-        let region = MKCoordinateRegionMake(location.coordinate, span)
+        let region = MKCoordinateRegionMake(coordinate, span)
         
         mapView.setRegion(region, animated: true)
         
         let annotation = MKPointAnnotation()
         
-        annotation.coordinate = location.coordinate
+        annotation.coordinate = coordinate
     
         mapView.addAnnotation(annotation)
         
@@ -111,7 +111,7 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
 
                 self.collectionView.reloadData()
                 
-                if self.location.photos.count == 20 {
+                if self.images.count == 20 {
                     
                     self.newCollectionButton.isEnabled = true
                     self.isLoading = false
@@ -131,9 +131,9 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 
-        CDM.default.removePhoto(with: location.photos[indexPath.row].id, from: location)
+        CDM.default.removePhoto(withImage: images[indexPath.row], atCoordinate: coordinate)
         
-        location.photos.remove(at: indexPath.row)
+        images.remove(at: indexPath.row)
         
         guard let cell = collectionView.cellForItem(at: indexPath) as? PhotoCell else { return }
         
@@ -141,10 +141,6 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         
         collectionView.moveItem(at: indexPath, to: IndexPath(item: 19, section: 0))
          
-    }
-    
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -155,7 +151,7 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoCell", for: indexPath) as! PhotoCell
         
-        if location.photos.count <= indexPath.row {
+        if images.count <= indexPath.row {
             if isLoading {
                 
                 cell.setLoading()
@@ -168,7 +164,7 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
             
         } else {
             cell.setLoaded()
-            cell.image.image = location.photos[indexPath.row].image
+            cell.image.image = images[indexPath.row]
         }
         
         return cell
