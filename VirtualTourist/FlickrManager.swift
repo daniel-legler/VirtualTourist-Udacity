@@ -18,7 +18,7 @@ enum FlickrResponse {
 
 enum FlickrError:Error {
     case noImagesForLocation(Error)
-    case noImageAtUrl(Error)
+    case noImageAtUrl
     case connectionError(Error)
     case invalidCoordinates(Error)
 }
@@ -47,13 +47,29 @@ class FlickrManager {
     
     static let `default` = FlickrManager()
     
+    var availablePages: Int?
+    var previousPage: Int = 0
+    
+    var page: Int {
+        guard availablePages != nil else { return 1 }
+        switch availablePages! - previousPage {
+        case 0:
+            previousPage = 1
+            return 1
+        default:
+            return previousPage + 1
+        }
+    }
+    
     func getPhotos (forCoordinate coordinate: CLLocationCoordinate2D, completion: @escaping (FlickrResponse)->()) {
         
         let lat = Double(coordinate.latitude)
         let lon = Double(coordinate.longitude)
                 
-        let url = URL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=99c82a1df1fd9f61e3ce8e8b4205cb12&lat=\(lat)&lon=\(lon)&per_page=500&radius=32&format=json&nojsoncallback=1")!
+        let url = URL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=99c82a1df1fd9f61e3ce8e8b4205cb12&lat=\(lat)&lon=\(lon)&page=\(page)&per_page=20&radius=32&format=json&nojsoncallback=1")!
 
+//        print("\(url.absoluteString)\n")
+        
         let task = URLSession.shared.dataTask(with: url) { (data, urlResponse, error) in
             
             guard error == nil else{
@@ -73,21 +89,17 @@ class FlickrManager {
             
             guard let photosObj = parsedData["photos"] as? [String:Any] else { print("Couldn't get photos"); return }
             guard let allPhotos = photosObj["photo"] as? [[String:Any]] else { return }
-            
 //            print("\(allPhotos.count) photos found")
             
-            var photos = [[String:Any]]()
+            self.availablePages = photosObj["pages"] as? Int
+            self.previousPage += 1
             
-            for _ in 1...20 {
-                photos.append(allPhotos[allPhotos.count.rand()])
-            }
-            
-            for photo in photos {
+            for photo in allPhotos {
                 
                 let fID = photo["farm"]!
-                guard let serverID = photo["server"]! as? String else { print("server"); return }
-                guard let photoID = photo["id"]! as? String else { print("id"); return }
-                guard let secret = photo["secret"]! as? String else { print("secret"); return }
+                guard let serverID = photo["server"]! as? String else { print("server"); continue }
+                guard let photoID = photo["id"]! as? String else { print("id"); continue }
+                guard let secret = photo["secret"]! as? String else { print("secret"); continue }
                 
                 let flickrURL = FlickrPhotoURL(farmID: String(describing: fID) , serverID: serverID, photoID: photoID, secret: secret)
                 
@@ -104,11 +116,11 @@ class FlickrManager {
         
         let photoTask = URLSession.shared.dataTask(with: url, completionHandler: { (data, urlResponse, error) in
             
-            guard let data = data else { return }
+            guard let data = data else { completion(.error(.noImageAtUrl)); return }
             
             let image = UIImage(data: data)
             
-            let flickrResponse = image != nil ? FlickrResponse.image(image!) : FlickrResponse.error(.noImageAtUrl(error!))
+            let flickrResponse = image != nil ? FlickrResponse.image(image!) : FlickrResponse.error(.noImageAtUrl)
             
             completion(flickrResponse)
             

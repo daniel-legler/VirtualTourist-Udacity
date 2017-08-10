@@ -27,7 +27,10 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         navigationController?.setNavigationBarHidden(false, animated: false)
         
         setupMap()
-                
+        
+        FM.default.availablePages = nil
+        FM.default.previousPage = 0
+        
         guard let location = CDM.default.loadLocation(forCoordinate: coordinate, context: CDM.default.readContext) else { return }
         
         images = location.images()
@@ -55,9 +58,9 @@ class PhotoVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataS
         CDM.default.clearPhotos(atCoordinate: coordinate)
         
         // Clear photos from this location instance
-        images = []
+        images.removeAll()
         
-        collectionView.reloadData()
+        self.collectionView.reloadData()
         
         // Download new photos from Flickr
         FM.default.getPhotos(forCoordinate: coordinate) { (flickrResponse) in
